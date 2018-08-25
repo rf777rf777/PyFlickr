@@ -1,7 +1,7 @@
 # 檔案名稱 .gitignore
 
 # 忽略資料夾
-
+__pycache__/
 
 # 忽略單個檔案
 ghostdriver.log
