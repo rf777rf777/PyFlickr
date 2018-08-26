@@ -23,7 +23,7 @@ class PyFlickr:
 
 	#Download single photo
 	@staticmethod
-	def singlePhoto_DL(photo_url, photo_name='', photo_size='medium_800', folderPath='', chunk_size= 512):
+	def singlePhoto_DL(photo_url, photo_name_to_save='', photo_size='medium_800', folder_path='', chunk_size= 512):
 		try:
 			#Handle if size page
 			keyword = 'sizes'	
@@ -41,11 +41,11 @@ class PyFlickr:
 					photo_url += '/'
 
 			#Determine target folder
-			if not len(folderPath) == 0:
-				folderPath = createFolder(folderPath)
+			if not len(folder_path) == 0:
+				folder_path = createFolder(folder_path)
 
 			#Determine photo name
-			photo_fullname = photo_name
+			photo_fullname = photo_name_to_save
 			if len(photo_fullname) == 0:
 				photo_fullname = "{0}.jpg".format(photo_url.split('/')[-2])
 			else:
@@ -53,7 +53,7 @@ class PyFlickr:
 					photo_fullname = "{0}.jpg".format(photo_fullname)
 
 			#Determine photo save path
-			photo_savePath = "{0}{1}".format(folderPath, photo_fullname)
+			photo_savePath = "{0}{1}".format(folder_path, photo_fullname)
 
 			#Determine photo size url
 			photo_size_url = "{0}{1}".format(photo_url, PHOTO_SIZE[photo_size])
@@ -62,7 +62,7 @@ class PyFlickr:
 			soup = GetRequestsResult(photo_size_url)
 			photo_direct_url = FirstOrDefault(soup.select('#allsizes-photo img'))['src']
 		
-		except:
+		except Exception as e:
 			if photo_size not in PHOTO_SIZE.keys():
 				errorMessage = "<Error> Please enter correct photo_size <Error>"
 			else:
@@ -74,19 +74,27 @@ class PyFlickr:
 
 		#Get Photo Stream
 		dl_request = requests.get(photo_direct_url, stream = True)
+		
+		#Get Target Content Length
+		total_length = int(dl_request.headers.get("Content-Length"))
+
+		print("{0}\nDownload Start: {1}".format('='*50, photo_fullname))
+
+		#Save photo to file
 		with open(photo_savePath, 'wb') as f:
-			#complete = 0
-			#PyFlickrDL.completeInTerminal(complete,fileSize)
+			complete = 0
 			for chunk in dl_request.iter_content(chunk_size):
 				if 	chunk:
 					f.write(chunk)
-					#complete+=1
-					#PyFlickrDL.completeInTerminal(complete,fileSize)
+					complete += len(chunk)
+					singlePhotoComplete(complete, total_length)
 			f.close()
+
+		print("\n{0}".format('='*50))
 	
 	#Download single album
 	@staticmethod
-	def singleAlbum_DL(album_url, album_name='', album_photo_size='medium_800', driverUri='./phantomjs', folderPath='', upperlimit = False, pagelimit = 5, chunk_size=512):
+	def singleAlbum_DL(album_url, album_name_to_save='', album_photo_size='medium_800', folder_path='', limit_trigger = True, limit_page = 1, chunk_size=512):
 		try:	
 			#Standardize album url
 			if len(album_url.split('/')) >= 7:
@@ -94,38 +102,50 @@ class PyFlickr:
 				if not album_url.endswith('/'):
 					album_url = "{0}/".format(album_url)
 
+			print("\nSeleinum Preparing...Please Wait!")
+
 			#Get SeleinumResult
 			driver = GetSeleinumResult(album_url)
 
 			#Determine max page
 			paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
-			pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
+			pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 			#print(pageMax)
 			
 			#Get & Parse album title
 			album_title = FirstOrDefault(driver.find_elements_by_css_selector('.album-title')).text.replace('/','_').replace(',','_').replace(' ','_')
 
 			#Determine target folder
-			if len(album_name) == 0:
-				album_name = album_title
-			if not len(folderPath) == 0:
-				if not folderPath.endswith('/'):
-					folderPath = "{0}/".format(folderPath)
-				folderPath = "{0}{1}".format(folderPath, album_name)
+			if len(album_name_to_save) == 0:
+				album_name_to_save = album_title
+			if not len(folder_path) == 0:
+				if not folder_path.endswith('/'):
+					folder_path = "{0}/".format(folder_path)
+				folder_path = "{0}{1}".format(folder_path, album_name_to_save)
 			else:
-				folderPath = album_name			
-			folderPath = createFolder(folderPath)
+				folder_path = album_name_to_save			
+			folder_path = createFolder(folder_path)
 
-		except:
+		except Exception as e:
 			errorMessage = "<Error> Please enter correct album url <Error>"
-			print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
-			return
 
-		count = 0
+			print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
+
+			return
+		
+		#Now page number
 		pageNumber = 1
 
 		while True:
+
+			print("{0}\nDownload Album Start: {1}, Page Number: {2}".format("="*50, album_name_to_save, pageNumber))
+
 			elements = driver.find_elements_by_css_selector('.overlay')
+			
+			#Photo complete counter
+			completed = 0
+			total_photo = len(elements)
+			
 			for elem in elements:			
 				slide_url = elem.get_attribute('href')
 
@@ -140,40 +160,46 @@ class PyFlickr:
 				photo_fullname = "{0}.jpg".format(slide_url.split('/')[-2])
 
 				#Determine photo save path
-				photo_savePath = '{0}{1}'.format(folderPath, photo_fullname) 
+				photo_savePath = '{0}{1}'.format(folder_path, photo_fullname) 
 
 				#Determine photo size url
-				photo_url = "{0}{1}".format(slide_url, PHOTO_SIZE[album_photo_size])
+				photo_size_url = "{0}{1}".format(slide_url, PHOTO_SIZE[album_photo_size])
 
 				#Find photo direct url
-				soup = GetRequestsResult(photo_url)
+				soup = GetRequestsResult(photo_size_url)
 				photo_direct_url = soup.select('#allsizes-photo img')[0]['src']
 
 				#Get Photo Stream
 				dl_request = requests.get(photo_direct_url, stream = True)
 				with open(photo_savePath, 'wb') as f:
 					#complete = 0
-					#PyFlickrDL.completeInTerminal(complete,fileSize)
 					for chunk in dl_request.iter_content(chunk_size):
 						if 	chunk:
 							f.write(chunk)
 							#complete+=1
-							#PyFlickrDL.completeInTerminal(complete,fileSize)
 					f.close()
-				count += 1			
-			if pageNumber >= pageMax: #or pageNumber >= pagelimit:
+				completed += 1
+				singlePhotoCompleteInAlbum(completed, total_photo)
+
+			print("\n{0}".format('='*50))
+
+			if pageNumber >= pageMax:
 				break
 			else:
+
 				pageNumber += 1
 				newUrl = "{0}page{1}".format(album_url.rstrip('\n'), pageNumber)
+				
+				print("\nSeleinum Preparing...Please Wait!")
 				driver = GetSeleinumResult(newUrl)
 
+
 #Create folder
-def createFolder(folderPath):
-	if not os.path.exists(folderPath):
-		os.makedirs(folderPath)
-	if not folderPath.endswith('/'):
-		folderPath = "{0}/".format(folderPath)
-	return folderPath
+def createFolder(folder_path):
+	if not os.path.exists(folder_path):
+		os.makedirs(folder_path)
+	if not folder_path.endswith('/'):
+		folder_path = "{0}/".format(folder_path)
+	return folder_path
 
 

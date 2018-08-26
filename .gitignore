@@ -2,7 +2,7 @@
 
 # 忽略資料夾
 __pycache__/
-
+driver/
 # 忽略單個檔案
 ghostdriver.log
 app.py

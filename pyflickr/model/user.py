@@ -118,7 +118,7 @@ class User:
 		#Now page number
 		pageNumber = 1
 		
-		#Photo Counter
+		#Photo counter
 		photoCounter = 0
 
 		while True:

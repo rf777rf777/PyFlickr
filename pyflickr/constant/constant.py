@@ -3,18 +3,14 @@
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 import time
 import sys
 
-'''
-HEAD = {
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
-}
-'''
 HEAD = {
 	"Accept": "application/json"
 }
-
 
 PHOTO_SIZE = {
 	"square_75" : "sizes/sq",
@@ -37,6 +33,9 @@ HTTPS_TITLE = 'https:'
 
 ROOT_URL = "https://www.flickr.com"
 
+#DRIVER_URI = 'driver/phantomjs'
+DRIVER_URI = 'driver/chromedriver'
+
 def FirstOrDefault(listObject):
 	if len(listObject) == 0:
 		return None
@@ -49,8 +48,13 @@ def GetRequestsResult(url):
 
 	return soup
 
-def GetSeleinumResult(url, driverUri='././phantomjs', wait_second=3):
-	driver = webdriver.PhantomJS(executable_path=driverUri)
+def GetSeleinumResult(url, driverUri=DRIVER_URI, wait_second=3):
+	chrome_options = Options()
+	chrome_options.add_argument('--headless')
+	chrome_options.add_argument('--disable-gpu')
+
+	driver = webdriver.Chrome(executable_path = driverUri, chrome_options=chrome_options)
+	#driver = webdriver.PhantomJS(executable_path=driverUri)
 	driver.get(url)
 
 	driver.maximize_window()
@@ -80,9 +84,18 @@ def getPageMax(paginationArea, upperlimit, pagelimit):
 
 
 #ProgressBar on Terminal  
-def completeInTerminal(complete,total):
-	if 	total == 0:
+def singlePhotoCompleteInAlbum(complete,total):
+	if total == 0:
 		return
 	done = int(30 * complete / total)
-	sys.stdout.write("\rCompleted：( %s / %s )[ %s%s ]" % (int(complete/total*100), int(total/total*100), '#'*done, '-'*(30 - done)))
+	sys.stdout.write("\rCompleted：( %s / %s )[ %s%s ]" % (complete, total, '#'*done, '-'*(30 - done)))
+	sys.stdout.flush()
+
+#ProgressBar on Terminal  
+def singlePhotoComplete(complete,total):
+	if total == 0:
+		return
+	percent = complete / total
+	done = int(30 * percent)
+	sys.stdout.write("\rCompleted：[ %s%s ] %s%s" % ('#'*done,' '*(30-done), int(percent*100), '%'))
 	sys.stdout.flush()
