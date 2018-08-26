@@ -3,7 +3,7 @@ import re
 from pyflickr.constant.constant import *
 from pyflickr.model.enum import PageEnum, PeopleEnum, PhotosEnum
 from pyflickr.model.about import About
-
+import time
 class User:
 	def __init__(self, user_id):
 		self.user_id = user_id
@@ -19,15 +19,15 @@ class User:
 		#Create "About" class
 		about = About()
 
-		#Determine title
+		#Get title
 		title = FirstOrDefault(result.select('div.title h1'))
 		about.title = title.text.strip() if title is not None else "None"
 		
-		#Determine subtitle
+		#Get subtitle
 		subtitle = FirstOrDefault(result.select('div p.subtitle.no-shrink.truncate'))
 		about.subtitle = subtitle.text.strip() if subtitle is not None else "None"
 
-		#Determine avatar url
+		#Get avatar url
 		avatar_url = FirstOrDefault(result.select('.avatar.no-menu.person.large'))
 		if avatar_url is not None:
 			avatar_url = avatar_url['style'].replace(' ','')
@@ -40,17 +40,17 @@ class User:
 			avatar_url = "None"
 		about.avatar = avatar_url
 
-		#Determine followers & following
+		#Get followers & following
 		followers = FirstOrDefault(result.select('p.followers.truncate.no-shrink'))
 		#re.findall(r"\d+\.?\d*",followers.text)
 		about.followers = re.findall(r"\d+\.?\d*K?M?G?T?", followers.text.strip().split('•')[0])[0] if followers is not None else "None"
 		about.following = re.findall(r"\d+\.?\d*K?M?G?T?", followers.text.strip().split('•')[1])[0] if followers is not None else "None"
 
-		#Determine description
+		#Get description
 		description = FirstOrDefault(result.select('.description.expanded'))
 		about.description = description.text.strip().replace(u'\xa0', u' ') if description is not None else "None"
 
-		#Determine info
+		#Get info
 		infoDict = {}
 		infos = result.select('.infos-view-container ul li')
 		for info in infos:
@@ -58,7 +58,7 @@ class User:
 			infoDict[infoTitle] = info.text.replace(infoTitle, '')
 		about.infos = infoDict
 		
-		#Determine general
+		#Get general
 		generalDict = {}
 		general_stats = result.select('.general-stats ul li')
 		for general in general_stats:
@@ -71,7 +71,7 @@ class User:
 			generalDict[title] = general.span.text
 		about.general_stats = generalDict
 		
-		#Determine showcase photos
+		#Get showcase photos
 		showcase_photos = result.select('.showcase .view.photo-list-photo-view.awake')
 		showcase_photoList = []
 		for photo in showcase_photos:
@@ -83,7 +83,7 @@ class User:
 				showcase_photoList.append(photo_url)
 		about.showcase_photos = showcase_photoList
 
-		#Determine popular photos
+		#Get popular photos
 		popular_photos = result.select('.popular-container .view.photo-list-photo-view.awake')
 		hot_photoList = []
 		for photo in popular_photos:
@@ -97,7 +97,10 @@ class User:
 
 		return to_dict(about)
 
-	def getPhotoStream(self, upperlimit = True, pagelimit = 5):
+	def getPhotoStream(self, limit_trigger = True, limit_page = 1):
+		
+		#Start Time
+		startTime = time.time()
 
 		#Determine "PhotoStream page" url
 		photoStream_url = "{0}/{1}/{2}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id)
@@ -107,13 +110,16 @@ class User:
 		
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
-		pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
-		
+		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
+
 		#Create photo dict
 		photoUrlDict = {}
 
 		#Now page number
 		pageNumber = 1
+		
+		#Photo Counter
+		photoCounter = 0
 
 		while True:
 
@@ -122,11 +128,12 @@ class User:
  			
 			#total = len(elements)	
 
-			#Determine photo url
+			#Get photo url
 			for elem in elements:
 				photo_url = elem.get_attribute('href')
 				photo_id = photo_url.split('/')[-2]
 				photoUrlDict[photo_id] = photo_url
+				photoCounter += 1
 
 			#Check if Now page number achieve page max number 
 			if pageNumber >= pageMax:
@@ -140,10 +147,23 @@ class User:
 				driver = GetSeleinumResult(next_url)
 				#time.sleep(1)
 
-		return photoUrlDict
-		
+		#End Time
+		endTime = time.time()
 
-	def getAlbums(self, upperlimit = True, pagelimit = 5):
+		#Create result dict
+		resultDict = {}
+		resultDict['Limit_Trigger'] = "{0}".format(limit_trigger)
+		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
+		resultDict['Time_Spend'] = round(endTime - startTime)
+		resultDict['PhotoStream_Count'] = photoCounter
+		resultDict['PhotoStream_Result'] = photoUrlDict
+
+		return resultDict
+
+	def getAlbums(self, limit_trigger = True, limit_page = 1):
+		
+		#Start Time
+		startTime = time.time()	
 		
 		#Determine "Albums page" url
 		albums_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Albums.value)
@@ -153,7 +173,7 @@ class User:
 		
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')	
-		pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
+		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 		
 		#Create albums dict
 		albumsUrlDict = {}
@@ -161,12 +181,15 @@ class User:
 		#Now page number
 		pageNumber = 1
 
+		#Album Counter
+		albumCounter = 0
+
 		while True:
 
 			#Get albums elements on page
 			elements = driver.find_elements_by_css_selector('.overlay')
 			
-			#Determine albums url
+			#Get albums url
 			for elem in elements:
 				album_data = {}
 
@@ -177,6 +200,7 @@ class User:
 				album_data["title"] = album_title
 				album_data["url"] = album_url
 				albumsUrlDict[album_id] = album_data
+				albumCounter += 1
 			
 			#Check if Now page number achieve page max number 
 			if pageNumber >= pageMax:
@@ -190,19 +214,33 @@ class User:
 				driver = GetSeleinumResult(next_url)
 				#time.sleep(1)
 
-		return albumsUrlDict
+		#End Time
+		endTime = time.time()
 
-	def getFaves(self, upperlimit = True, pagelimit = 5):
+		#Create result dict
+		resultDict = {}
+		resultDict['Limit_Trigger'] = "{0}".format(limit_trigger)
+		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
+		resultDict['Time_Spend'] = round(endTime - startTime)
+		resultDict['Albums_Count'] = albumCounter
+		resultDict['Albums_Result'] = albumsUrlDict
+
+		return resultDict
+
+	def getFaves(self, limit_trigger = True, limit_page = 1):
+
+		#Start Time
+		startTime = time.time()	
 		
 		#Determine "Faves page" url
 		faves_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Favorites.value)
-		
+
 		#Get Seleinum Result from faves_url
 		driver = GetSeleinumResult(faves_url)
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
-		pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
+		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 
 		#Create photo dict	
 		photoUrlDict = {}
@@ -210,17 +248,21 @@ class User:
 		#Now page number
 		pageNumber = 1
 
+		#Fave Counter
+		faveCounter = 0
+
 		while True:
 
 			#Get favorite photo elements on page
 			elements = driver.find_elements_by_css_selector('.overlay')
 
-			#Determine favorite photo url
+			#Get favorite photo url
 			for elem in elements:
  				fave_url = elem.get_attribute('href')
  				photo_url = '/'.join(fave_url.split('/')[:-3])
  				photo_id = fave_url.split('/')[-4]
  				photoUrlDict[photo_id] = photo_url
+ 				faveCounter += 1
 			
 			#Check if Now page number achieve page max number 
 			if pageNumber >= pageMax:
@@ -234,10 +276,24 @@ class User:
 				driver = GetSeleinumResult(next_url)
 				#time.sleep(1)
 
-		return photoUrlDict
+		#End Time
+		endTime = time.time()
+
+		#Create result dict
+		resultDict = {}
+		resultDict['Limit_Trigger'] = "{0}".format(limit_trigger)
+		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
+		resultDict['Time_Spend'] = round(endTime - startTime)
+		resultDict['Faves_Count'] = faveCounter
+		resultDict['Faves_Result'] = photoUrlDict
+
+		return resultDict
 		
-	def getGalleries(self, upperlimit = True, pagelimit = 5):
-		
+	def getGalleries(self, limit_trigger = True, limit_page = 1):
+	
+		#Start Time
+		startTime = time.time()
+
 		#Determine "Galleries page" url
 		galleries_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Galleries.value)
 
@@ -246,7 +302,7 @@ class User:
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
-		pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
+		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 
 		#Create gallery dict	
 		galleryUrlDict = {}
@@ -254,12 +310,15 @@ class User:
 		#Now page number
 		pageNumber = 1
 
+		#Gallery Counter
+		galleryCounter = 0
+
 		while True:
 
 			#Get gallery elements on page
 			elements = driver.find_elements_by_css_selector('.Seta')
 			
-			#Determine gallery data
+			#Get gallery data
 			for elem in elements:
 
 				gallery_data = {}
@@ -272,6 +331,7 @@ class User:
 				gallery_data['title'] = gallery_title
 
 				galleryUrlDict[gallery_id] = gallery_data
+				galleryCounter += 1
 
 			#Check if Now page number achieve page max number 
 			if pageNumber >= pageMax:
@@ -285,10 +345,23 @@ class User:
 				driver = GetSeleinumResult(next_url)
 				#time.sleep(1)
 
-		return galleryUrlDict		
-		
+		#End Time
+		endTime = time.time()
 
-	def getGroups(self, upperlimit = True, pagelimit = 5):
+		#Create result dict
+		resultDict = {}
+		resultDict['Limit_Trigger'] = "{0}".format(limit_trigger)
+		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
+		resultDict['Time_Spend'] = round(endTime - startTime)
+		resultDict['Galleries_Count'] = galleryCounter
+		resultDict['Galleries_Result'] = galleryUrlDict
+
+		return resultDict				
+
+	def getGroups(self, limit_trigger = True, limit_page = 1):
+
+		#Start Time
+		startTime = time.time()
 		
 		#Determine "Groups page" url
 		groups_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.People.value, self.user_id, PeopleEnum.Groups.value)
@@ -298,20 +371,23 @@ class User:
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
-		pageMax = getPageMax(paginationArea, upperlimit, pagelimit)
+		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 		
 		#Create group dict	
 		groupDict = {}
 		
 		#Now page number
 		pageNumber = 1
+		
+		#Group Counter
+		GroupCounter = 0
 
 		while True:
 
 			#Get gallery elements on page
 			elements = driver.find_elements_by_css_selector('tbody tr')[1:]
 			
-			#Determine group data
+			#Get group data
 			for elem in elements:
 
 				group_data = {}				
@@ -326,6 +402,7 @@ class User:
 				group_data['discuss'] = {'numbers': content[4].text, 'url': content[4].get_attribute('href')} 
 
 				groupDict[group_id] = group_data
+				GroupCounter += 1
 
 			#Check if Now page number achieve page max number 
 			if pageNumber >= pageMax:
@@ -338,7 +415,19 @@ class User:
 				#Get Seleinum Result from next groups_url
 				driver = GetSeleinumResult(next_url)
 				#time.sleep(1)
-		return groupDict		
+
+		#End Time
+		endTime = time.time()
+		
+		#Create result dict
+		resultDict = {}
+		resultDict['Limit_Trigger'] = "{0}".format(limit_trigger)
+		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
+		resultDict['Time_Spend'] = round(endTime - startTime)
+		resultDict['Groups_Count'] = GroupCounter
+		resultDict['Groups_Result'] = groupDict
+
+		return resultDict		
 
 #Parse class to dict
 def to_dict(class_model):
