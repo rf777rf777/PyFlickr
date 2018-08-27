@@ -52,9 +52,14 @@ def GetSeleinumResult(url, driverUri=DRIVER_URI, wait_second=3):
 	chrome_options = Options()
 	chrome_options.add_argument('--headless')
 	chrome_options.add_argument('--disable-gpu')
-
+	chrome_options.add_argument('--no-sandbox')  
+	#driver = webdriver.Chrome(driver_path='<path-to-driver>/chromedriver', chrome_options=chrome_options,
+  	#service_args=['--verbose', '--log-path=<path-to-log>/chromedriver.log'])
 	driver = webdriver.Chrome(executable_path = driverUri, chrome_options=chrome_options)
 	#driver = webdriver.PhantomJS(executable_path=driverUri)
+
+	print("\nDriver is Now Loading...")
+
 	driver.get(url)
 
 	driver.maximize_window()

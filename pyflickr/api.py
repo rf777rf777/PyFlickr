@@ -1,12 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import sys
 from pyflickr.constant.constant import *
 from pyflickr.model.user import User
 from pyflickr.model.photo import Photo
-
-import re
 import os
 
 class PyFlickr:
@@ -18,8 +15,16 @@ class PyFlickr:
 	
 	#Get user data
 	@staticmethod
-	def getPhotoLink(photo_url):
+	def getPhotoSizePage(photo_url):
 		return Photo(photo_url)
+
+	@staticmethod
+	def getPhotoDirectUrl(size_page_url):
+		#Find photo direct url
+		soup = GetRequestsResult(size_page_url)
+		photo_element = FirstOrDefault(soup.select('#allsizes-photo img'))
+		photo_direct_url = photo_element['src'] if photo_element is not None else "None"
+		return photo_direct_url
 
 	#Download single photo
 	@staticmethod
@@ -63,13 +68,13 @@ class PyFlickr:
 			photo_direct_url = FirstOrDefault(soup.select('#allsizes-photo img'))['src']
 		
 		except Exception as e:
-			if photo_size not in PHOTO_SIZE.keys():
-				errorMessage = "<Error> Please enter correct photo_size <Error>"
-			else:
-				errorMessage = "<Error> Please enter correct photo url <Error>"
+			#if photo_size not in PHOTO_SIZE.keys():
+				#errorMessage = "<Error> Please enter correct photo_size <Error>"
+			#else:
+			#errorMessage = e
 
-			print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
-
+			#print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
+			print("\n{0}".format(e))
 			return			
 
 		#Get Photo Stream
@@ -127,9 +132,10 @@ class PyFlickr:
 			folder_path = createFolder(folder_path)
 
 		except Exception as e:
-			errorMessage = "<Error> Please enter correct album url <Error>"
-
-			print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
+			#errorMessage = "<Error> Please enter correct album url <Error>"
+			#errorMessage = e
+			#print("\n{0}\n{1}\n{0}".format('='*len(errorMessage), errorMessage))
+			print("\n{0}".format(e))
 
 			return
 		
@@ -201,5 +207,3 @@ def createFolder(folder_path):
 	if not folder_path.endswith('/'):
 		folder_path = "{0}/".format(folder_path)
 	return folder_path
-
-
