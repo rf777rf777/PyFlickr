@@ -13,16 +13,17 @@ class PyFlickr:
 	def getUser(user_id):
 		return User(user_id)
 	
-	#Get user data
+	#Get photo size page
 	@staticmethod
 	def getPhotoSizePage(photo_url):
 		return Photo(photo_url)
 
+	#Get photo direct url from size page
 	@staticmethod
 	def getPhotoDirectUrl(size_page_url):
 		#Find photo direct url
-		soup = GetRequestsResult(size_page_url)
-		photo_element = FirstOrDefault(soup.select('#allsizes-photo img'))
+		soup = getRequestsResult(size_page_url)
+		photo_element = firstOrDefault(soup.select('#allsizes-photo img'))
 		photo_direct_url = photo_element['src'] if photo_element is not None else "None"
 		return photo_direct_url
 
@@ -35,7 +36,7 @@ class PyFlickr:
 			if keyword in photo_url:
 				sizes = photo_url.split('/')[-2] if photo_url.endswith('/') else photo_url.split('/')[-1]
 				sizes_value = '{0}/{1}'.format(keyword, sizes)
-				photo_size_key = FirstOrDefault([key for key, value in PHOTO_SIZE.items() if value == sizes_value])
+				photo_size_key = firstOrDefault([key for key, value in PHOTO_SIZE.items() if value == sizes_value])
 				if photo_size_key is not None:
 					photo_size = photo_size_key
 
@@ -64,8 +65,8 @@ class PyFlickr:
 			photo_size_url = "{0}{1}".format(photo_url, PHOTO_SIZE[photo_size])
 
 			#Find photo direct url
-			soup = GetRequestsResult(photo_size_url)
-			photo_direct_url = FirstOrDefault(soup.select('#allsizes-photo img'))['src']
+			soup = getRequestsResult(photo_size_url)
+			photo_direct_url = firstOrDefault(soup.select('#allsizes-photo img'))['src']
 		
 		except Exception as e:
 			#if photo_size not in PHOTO_SIZE.keys():
@@ -110,7 +111,7 @@ class PyFlickr:
 			print("\nSeleinum Preparing...Please Wait!")
 
 			#Get SeleinumResult
-			driver = GetSeleinumResult(album_url)
+			driver = getSeleinumResult(album_url)
 
 			#Determine max page
 			paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
@@ -118,7 +119,7 @@ class PyFlickr:
 			#print(pageMax)
 			
 			#Get & Parse album title
-			album_title = FirstOrDefault(driver.find_elements_by_css_selector('.album-title')).text.replace('/','_').replace(',','_').replace(' ','_')
+			album_title = firstOrDefault(driver.find_elements_by_css_selector('.album-title')).text.replace('/','_').replace(',','_').replace(' ','_')
 
 			#Determine target folder
 			if len(album_name_to_save) == 0:
@@ -172,7 +173,7 @@ class PyFlickr:
 				photo_size_url = "{0}{1}".format(slide_url, PHOTO_SIZE[album_photo_size])
 
 				#Find photo direct url
-				soup = GetRequestsResult(photo_size_url)
+				soup = getRequestsResult(photo_size_url)
 				photo_direct_url = soup.select('#allsizes-photo img')[0]['src']
 
 				#Get Photo Stream
@@ -197,7 +198,7 @@ class PyFlickr:
 				newUrl = "{0}page{1}".format(album_url.rstrip('\n'), pageNumber)
 				
 				print("\nSeleinum Preparing...Please Wait!")
-				driver = GetSeleinumResult(newUrl)
+				driver = getSeleinumResult(newUrl)
 
 
 #Create folder

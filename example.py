@@ -69,7 +69,7 @@ PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371866885
 
 #PyFlickr.singleAlbum_DL(album_url="https://www.flickr.com/photos/55570664@N02/albums/72157662134683704", limit_trigger=False)
 
-#PyFlickr.singleAlbum_DL(album_url="https://www.flickr.com/photos/55570664@N02/albums/72157668666673901", limit_trigger=False)
+PyFlickr.singleAlbum_DL(album_url="https://www.flickr.com/photos/55570664@N02/albums/72157668666673901", limit_trigger=False)
 
 photo_size = PyFlickr.getPhotoSizePage("https://www.flickr.com/photos/139958401@N06/43371871895/in/dateposted-public/")
 

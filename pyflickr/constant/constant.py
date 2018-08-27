@@ -36,19 +36,19 @@ ROOT_URL = "https://www.flickr.com"
 #DRIVER_URI = 'driver/phantomjs'
 DRIVER_URI = 'driver/chromedriver'
 
-def FirstOrDefault(listObject):
+def firstOrDefault(listObject):
 	if len(listObject) == 0:
 		return None
 	#return next((f for f in listObject if listObject.index(f) == 0), None)
 	return listObject[0]
 
-def GetRequestsResult(url):
+def getRequestsResult(url):
 	result = requests.get(url, HEAD).content
 	soup = BeautifulSoup(result, HTML_PARSER)
 
 	return soup
 
-def GetSeleinumResult(url, driverUri=DRIVER_URI, wait_second=3):
+def getSeleinumResult(url, driverUri=DRIVER_URI, wait_second=3):
 	chrome_options = Options()
 	chrome_options.add_argument('--headless')
 	chrome_options.add_argument('--disable-gpu')

@@ -14,21 +14,21 @@ class User:
 		url = "{0}/{1}/{2}/".format(ROOT_URL, PageEnum.People.value, self.user_id)
 		
 		#Get requests result from url
-		result = GetRequestsResult(url)
+		result = getRequestsResult(url)
 
 		#Create "About" class
 		about = About()
 
 		#Get title
-		title = FirstOrDefault(result.select('div.title h1'))
+		title = firstOrDefault(result.select('div.title h1'))
 		about.title = title.text.strip() if title is not None else "None"
 		
 		#Get subtitle
-		subtitle = FirstOrDefault(result.select('div p.subtitle.no-shrink.truncate'))
+		subtitle = firstOrDefault(result.select('div p.subtitle.no-shrink.truncate'))
 		about.subtitle = subtitle.text.strip() if subtitle is not None else "None"
 
 		#Get avatar url
-		avatar_url = FirstOrDefault(result.select('.avatar.no-menu.person.large'))
+		avatar_url = firstOrDefault(result.select('.avatar.no-menu.person.large'))
 		if avatar_url is not None:
 			avatar_url = avatar_url['style'].replace(' ','')
 			if HTTPS_TITLE in avatar_url:
@@ -41,13 +41,13 @@ class User:
 		about.avatar = avatar_url
 
 		#Get followers & following
-		followers = FirstOrDefault(result.select('p.followers.truncate.no-shrink'))
+		followers = firstOrDefault(result.select('p.followers.truncate.no-shrink'))
 		#re.findall(r"\d+\.?\d*",followers.text)
 		about.followers = re.findall(r"\d+\.?\d*K?M?G?T?", followers.text.strip().split('•')[0])[0] if followers is not None else "None"
 		about.following = re.findall(r"\d+\.?\d*K?M?G?T?", followers.text.strip().split('•')[1])[0] if followers is not None else "None"
 
 		#Get description
-		description = FirstOrDefault(result.select('.description.expanded'))
+		description = firstOrDefault(result.select('.description.expanded'))
 		about.description = description.text.strip().replace(u'\xa0', u' ') if description is not None else "None"
 
 		#Get info
@@ -106,7 +106,7 @@ class User:
 		photoStream_url = "{0}/{1}/{2}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id)
 		
 		#Get Seleinum Result from photoStream_url
-		driver = GetSeleinumResult(photoStream_url)
+		driver = getSeleinumResult(photoStream_url)
 		
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
@@ -144,7 +144,7 @@ class User:
 				next_url = "{0}page{1}".format(photoStream_url.rstrip('\n'), pageNumber)
 
 				#Get Seleinum Result from next photoStream_url
-				driver = GetSeleinumResult(next_url)
+				driver = getSeleinumResult(next_url)
 				#time.sleep(1)
 
 		#End Time
@@ -169,7 +169,7 @@ class User:
 		albums_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Albums.value)
 
 		#Get Seleinum Result from albums_url
-		driver = GetSeleinumResult(albums_url)
+		driver = getSeleinumResult(albums_url)
 		
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')	
@@ -211,7 +211,7 @@ class User:
 				next_url = "{0}page{1}".format(albums_url.rstrip('\n'), pageNumber)
 				
 				#Get Seleinum Result from next albums_url
-				driver = GetSeleinumResult(next_url)
+				driver = getSeleinumResult(next_url)
 				#time.sleep(1)
 
 		#End Time
@@ -236,7 +236,7 @@ class User:
 		faves_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Favorites.value)
 
 		#Get Seleinum Result from faves_url
-		driver = GetSeleinumResult(faves_url)
+		driver = getSeleinumResult(faves_url)
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
@@ -273,7 +273,7 @@ class User:
 				next_url = "{0}page{1}".format(faves_url.rstrip('\n'), pageNumber)
 				
 				#Get Seleinum Result from next faves_url
-				driver = GetSeleinumResult(next_url)
+				driver = getSeleinumResult(next_url)
 				#time.sleep(1)
 
 		#End Time
@@ -298,7 +298,7 @@ class User:
 		galleries_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.Photo.value, self.user_id, PhotosEnum.Galleries.value)
 
 		#Get Seleinum Result from galleries_url
-		driver = GetSeleinumResult(galleries_url)
+		driver = getSeleinumResult(galleries_url)
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
@@ -342,7 +342,7 @@ class User:
 				next_url = "{0}page{1}".format(galleries_url.rstrip('\n'), pageNumber)
 				
 				#Get Seleinum Result from next galleries_url
-				driver = GetSeleinumResult(next_url)
+				driver = getSeleinumResult(next_url)
 				#time.sleep(1)
 
 		#End Time
@@ -367,7 +367,7 @@ class User:
 		groups_url = "{0}/{1}/{2}/{3}/".format(ROOT_URL, PageEnum.People.value, self.user_id, PeopleEnum.Groups.value)
 		
 		#Get Seleinum Result from groups_url
-		driver = GetSeleinumResult(groups_url)
+		driver = getSeleinumResult(groups_url)
 
 		#Determine max page
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
@@ -413,7 +413,7 @@ class User:
 				next_url = "{0}page{1}".format(groups_url.rstrip('\n'), pageNumber)
 				
 				#Get Seleinum Result from next groups_url
-				driver = GetSeleinumResult(next_url)
+				driver = getSeleinumResult(next_url)
 				#time.sleep(1)
 
 		#End Time
