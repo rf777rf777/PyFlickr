@@ -22,10 +22,17 @@ $ unzip chromedriver_{OS}.zip
 ```
 
 Remember to update`{VERSION}`with the latest version and`{OS}`with your computer OS.
-For example, version **2.41** on **Mac** below:
+
+For example:
 ```shell
+# version **2.41** on **Mac**
 $ curl -O https://chromedriver.storage.googleapis.com/2.41/chromedriver_mac64.zip
 ```
+```shell
+# version **2.41** on **Windows**
+$ curl -O https://chromedriver.storage.googleapis.com/2.41/chromedriver_win32.zip
+```
+
 # **📗 Usage**
 
 Start by importing module - **PyFlickr**:
