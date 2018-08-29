@@ -15,7 +15,7 @@ class PyFlickr:
 	
 	#Get photo size page
 	@staticmethod
-	def getPhotoSizePage(photo_url):
+	def getPhoto(photo_url):
 		return Photo(photo_url)
 
 	#Get photo direct url from size page

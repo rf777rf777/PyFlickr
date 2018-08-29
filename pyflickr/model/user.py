@@ -55,7 +55,10 @@ class User:
 		infos = result.select('.infos-view-container ul li')
 		for info in infos:
 			infoTitle = info.span.text
-			infoDict[infoTitle] = info.text.replace(infoTitle, '')
+			infoValue = info.text.replace(infoTitle, '')
+			
+			infoTitle = info_english_title(infoTitle)
+			infoDict[infoTitle] = infoValue
 		about.infos = infoDict
 		
 		#Get general
@@ -427,7 +430,12 @@ class User:
 		resultDict['Groups_Count'] = GroupCounter
 		resultDict['Groups_Result'] = groupDict
 
-		return resultDict		
+		return resultDict
+
+def info_english_title(title):
+	zh_TW_dict = { "已加入": "Joined", "出生地": "Hometown", "目前所在城市": "Current city", '國家/地區': "Country", "網站": "Website"}
+	value = zh_TW_dict.get(title)
+	return title if value is None else value
 
 #Parse class to dict
 def to_dict(class_model):
