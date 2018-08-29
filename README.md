@@ -1,6 +1,6 @@
 # **PyFlickr - An Unofficial Flickr API**
 
-![PyFlickr](https://raw.githubusercontent.com/rf777rf777/PyFlickr/master/ProjectPicture/Banner.jpg)
+![PyFlickr](https://raw.githubusercontent.com/rf777rf777/PyFlickr/master/content/Banner.jpg)
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
