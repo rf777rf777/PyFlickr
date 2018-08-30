@@ -15,7 +15,8 @@ user4 = PyFlickr.getUser("kulagg")
 user5 = PyFlickr.getUser("wingmanzero")
 
 #Get user "About" Page
-#user_about = user.getAbout()
+user_about = user.getAbout()
+print(user_about)
 #writeResultFile("About", user_about)
 #user1_about = user1.getAbout()
 #writeResultFile("About", user1_about)
@@ -46,7 +47,7 @@ user5 = PyFlickr.getUser("wingmanzero")
 #writeResultFile("Faves", user2_faves)
 
 #Get user "Galleries" Page
-#user3_galleries = user3.getGalleries(limit_trigger = False)
+#user_galleries = user.getGalleries(limit_trigger = False)
 #writeResultFile("Galleries", user3_galleries)
 #pprint(user_galleries)
 
@@ -57,7 +58,17 @@ user5 = PyFlickr.getUser("wingmanzero")
 #user5_groups = user5.getGroups()
 #writeResultFile("Groups", user5_groups)
 
+# Return 1 page of Groups Page.
+#user_groups = user.getGroups()
+#print(user_groups)
+# Return 3 pages of Groups Page.
+#user_groups = user.getGroups(limit_page = 3)
+#print(user_groups)
+# Return all pages of Groups Page.
+#user_groups = user.getGroups(limit_trigger = False)
+#print(user_groups)
 
+'''
 PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371869065/sizes/c/")
 PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371867585/in/dateposted-public/")
 PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371866885/in/album-72157670574464187/")
@@ -79,12 +90,24 @@ url = photo_size.medium_800
 direct_url = PyFlickr.getPhotoDirectUrl(url)
 
 print(direct_url)
+'''
+'''
+url = "https://www.flickr.com/photos/139958401@N06/44277691471/sizes/c"
+dir_url = PyFlickr.getPhotoDirectUrl(url)
+print(dir_url)
+'''
 
+#PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371867585/")
 
+#PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371867585/", photo_name_to_save="A_new_photo", photo_size="small_320")
 
+#PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371867585/", folder_path="NewFolder")
 
+target_album = "https://www.flickr.com/photos/139958401@N06/albums/72157670574464187"
 
+PyFlickr.singleAlbum_DL(album_url = target_album)
 
+PyFlickr.singleAlbum_DL(album_url = target_album, album_photo_size = "large_2048")
 
-
+PyFlickr.singleAlbum_DL(album_url = target_album, album_name_to_save = "New_Album", folder_path = "ALBUM_FILE")
 
