@@ -51,7 +51,7 @@ from pyflickr import PyFlickr
 ### ❗️ For more details, please see **[PyFlickr Wiki](https://github.com/rf777rf777/PyFlickr/wiki)** .
 
 #### Example :
-```python=3.6
+```python
 # This example shows how to download all of user albums
 
 from pyflickr import PyFlickr
