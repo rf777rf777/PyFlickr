@@ -52,7 +52,8 @@ from pyflickr import PyFlickr
 
 #### Example :
 ```python=3.6
-#This example shows how to download all of user albums
+# This example shows how to download all of user albums
+
 from pyflickr import PyFlickr
 
 user = PyFlickr.getUser('139958401@N06')
@@ -77,4 +78,5 @@ Then, as mentioned previously, please setup your **[Chromedriver](http://chromed
 
 # 📝 License
 
-MIT
+Licensed under [MIT license](http://opensource.org/licenses/MIT).
+
