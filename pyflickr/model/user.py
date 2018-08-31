@@ -56,7 +56,7 @@ class User:
 		for info in infos:
 			infoTitle = info.span.text
 			infoValue = info.text.replace(infoTitle, '')
-			
+
 			infoTitle = info_english_title(infoTitle)
 			infoDict[infoTitle] = infoValue
 		about.infos = infoDict
@@ -115,8 +115,8 @@ class User:
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
 		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 
-		#Create photo dict
-		photoUrlDict = {}
+		#Create photo list
+		photoUrlList = []
 
 		#Now page number
 		pageNumber = 1
@@ -135,7 +135,7 @@ class User:
 			for elem in elements:
 				photo_url = elem.get_attribute('href')
 				photo_id = photo_url.split('/')[-2]
-				photoUrlDict[photo_id] = photo_url
+				photoUrlList.append(photo_url)
 				photoCounter += 1
 
 			#Check if Now page number achieve page max number 
@@ -159,7 +159,7 @@ class User:
 		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
 		resultDict['Time_Spend'] = round(endTime - startTime)
 		resultDict['PhotoStream_Count'] = photoCounter
-		resultDict['PhotoStream_Result'] = photoUrlDict
+		resultDict['PhotoStream_Result'] = photoUrlList
 
 		return resultDict
 
@@ -178,8 +178,8 @@ class User:
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')	
 		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 		
-		#Create albums dict
-		albumsUrlDict = {}
+		#Create albums list
+		albumsUrlList = []
 		
 		#Now page number
 		pageNumber = 1
@@ -202,7 +202,7 @@ class User:
 
 				album_data["title"] = album_title
 				album_data["url"] = album_url
-				albumsUrlDict[album_id] = album_data
+				albumsUrlList.append(album_data)
 				albumCounter += 1
 			
 			#Check if Now page number achieve page max number 
@@ -226,7 +226,7 @@ class User:
 		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
 		resultDict['Time_Spend'] = round(endTime - startTime)
 		resultDict['Albums_Count'] = albumCounter
-		resultDict['Albums_Result'] = albumsUrlDict
+		resultDict['Albums_Result'] = albumsUrlList
 
 		return resultDict
 
@@ -245,8 +245,8 @@ class User:
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
 		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 
-		#Create photo dict	
-		photoUrlDict = {}
+		#Create photo list	
+		photoUrlList = []
 
 		#Now page number
 		pageNumber = 1
@@ -264,7 +264,7 @@ class User:
  				fave_url = elem.get_attribute('href')
  				photo_url = '/'.join(fave_url.split('/')[:-3])
  				photo_id = fave_url.split('/')[-4]
- 				photoUrlDict[photo_id] = photo_url
+ 				photoUrlList.append(photo_url)
  				faveCounter += 1
 			
 			#Check if Now page number achieve page max number 
@@ -288,7 +288,7 @@ class User:
 		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
 		resultDict['Time_Spend'] = round(endTime - startTime)
 		resultDict['Faves_Count'] = faveCounter
-		resultDict['Faves_Result'] = photoUrlDict
+		resultDict['Faves_Result'] = photoUrlList
 
 		return resultDict
 		
@@ -307,8 +307,8 @@ class User:
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
 		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 
-		#Create gallery dict	
-		galleryUrlDict = {}
+		#Create gallery list	
+		galleryUrlList = []
 		
 		#Now page number
 		pageNumber = 1
@@ -333,7 +333,7 @@ class User:
 				gallery_data['url'] = gallery_url
 				gallery_data['title'] = gallery_title
 
-				galleryUrlDict[gallery_id] = gallery_data
+				galleryUrlList.append(gallery_data)
 				galleryCounter += 1
 
 			#Check if Now page number achieve page max number 
@@ -357,7 +357,7 @@ class User:
 		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
 		resultDict['Time_Spend'] = round(endTime - startTime)
 		resultDict['Galleries_Count'] = galleryCounter
-		resultDict['Galleries_Result'] = galleryUrlDict
+		resultDict['Galleries_Result'] = galleryUrlList
 
 		return resultDict				
 
@@ -376,8 +376,8 @@ class User:
 		paginationArea = driver.find_elements_by_css_selector('.view.pagination-view a span')
 		pageMax = getPageMax(paginationArea, limit_trigger, limit_page)
 		
-		#Create group dict	
-		groupDict = {}
+		#Create group list	
+		groupList = []
 		
 		#Now page number
 		pageNumber = 1
@@ -404,7 +404,7 @@ class User:
 				group_data['photos'] = {'numbers': content[2].text, 'url': content[2].get_attribute('href')}
 				group_data['discuss'] = {'numbers': content[4].text, 'url': content[4].get_attribute('href')} 
 
-				groupDict[group_id] = group_data
+				groupList.append(group_data)
 				GroupCounter += 1
 
 			#Check if Now page number achieve page max number 
@@ -428,7 +428,7 @@ class User:
 		resultDict['Limit_Page'] = limit_page if limit_trigger else "None"
 		resultDict['Time_Spend'] = round(endTime - startTime)
 		resultDict['Groups_Count'] = GroupCounter
-		resultDict['Groups_Result'] = groupDict
+		resultDict['Groups_Result'] = groupList
 
 		return resultDict
 

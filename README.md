@@ -18,7 +18,8 @@ $ pip install PyFlickr
 Then, before using, you have to download **[Chromedriver](http://chromedriver.chromium.org/downloads)** to **driver** folder and **unzip** it.
 
 ```shell
-$ mkdir driver | cd driver
+$ mkdir driver
+$ cd driver
 $ curl -O https://chromedriver.storage.googleapis.com/{VERSION}/chromedriver_{OS}.zip
 $ unzip chromedriver_{OS}.zip
 ```
@@ -52,16 +53,16 @@ from pyflickr import PyFlickr
 
 #### Example :
 ```python
-# This example shows how to download all of user albums
+# This example shows : Download all of albums of one user in a new folder named "ResultFolder"
 
 from pyflickr import PyFlickr
 
 user = PyFlickr.getUser('139958401@N06')
-result = user.getAlbums(limit_trigger = False)['Albums_Result']
-albums = result.items()
+result = user.getAlbums(limit_trigger = False)
+albums = result['Albums_Result']
 for album_data in albums:
-	album_url = album_data[1]['url']
-	PyFlickr.singleAlbum_DL(album_url = album_url)
+	album_url = album_data['url']
+	PyFlickr.singleAlbum_DL(album_url = album_url, folder_path='ResultFolder')
 ```
 
 # 📙 Development
