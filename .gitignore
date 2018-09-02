@@ -7,3 +7,5 @@ driver/
 ghostdriver.log
 app.py
 phantomjs
+example.py
+setup.cfg

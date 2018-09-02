@@ -15,8 +15,8 @@ user4 = PyFlickr.getUser("kulagg")
 user5 = PyFlickr.getUser("wingmanzero")
 
 #Get user "About" Page
-user_about = user.getAbout()
-print(user_about)
+#user_about = user.getAbout()
+#print(user_about)
 #writeResultFile("About", user_about)
 #user1_about = user1.getAbout()
 #writeResultFile("About", user1_about)
@@ -103,6 +103,7 @@ print(dir_url)
 
 #PyFlickr.singlePhoto_DL("https://www.flickr.com/photos/139958401@N06/43371867585/", folder_path="NewFolder")
 
+'''
 target_album = "https://www.flickr.com/photos/139958401@N06/albums/72157670574464187"
 
 PyFlickr.singleAlbum_DL(album_url = target_album)
@@ -110,4 +111,21 @@ PyFlickr.singleAlbum_DL(album_url = target_album)
 PyFlickr.singleAlbum_DL(album_url = target_album, album_photo_size = "large_2048")
 
 PyFlickr.singleAlbum_DL(album_url = target_album, album_name_to_save = "New_Album", folder_path = "ALBUM_FILE")
+'''
+from pyflickr import PyFlickr
+
+user = PyFlickr.getUser('139958401@N06')
+
+result = user.getAlbums(limit_trigger = False)
+
+albums = result['Albums_Result']
+
+for album_data in albums:
+	album_url = album_data['url']
+	PyFlickr.singleAlbum_DL(album_url = album_url, folder_path='ResultFolder')
+
+
+#result = user.getGroups(limit_trigger = False)
+#print(result)
+
 

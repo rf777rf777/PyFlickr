@@ -43,7 +43,7 @@ def firstOrDefault(listObject):
 	return listObject[0]
 
 def getRequestsResult(url):
-	result = requests.get(url, HEAD).content
+	result = requests.get(url, headers=HEAD).content
 	soup = BeautifulSoup(result, HTML_PARSER)
 
 	return soup
