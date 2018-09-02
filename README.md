@@ -2,7 +2,7 @@
 
 ![PyFlickr](https://raw.githubusercontent.com/rf777rf777/PyFlickr/master/content/Banner.jpg)
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  [![PyPI version](https://badge.fury.io/py/PyFlickr.svg)](https://badge.fury.io/py/PyFlickr)
 
 
 **PyFlickr** provides python-developers to access to user, albums, photos and other public information from [**Flickr**](
