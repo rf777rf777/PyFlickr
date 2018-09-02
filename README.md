@@ -42,7 +42,7 @@ Start by importing module - **PyFlickr**:
 
 
 
-```python=3.6
+```python
 from pyflickr import PyFlickr
 ```
 # **📘 Documentation**
