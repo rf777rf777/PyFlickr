@@ -6,7 +6,7 @@
 
 
 **PyFlickr** provides python-developers to access to user, albums, photos and other public information from [**Flickr**](
-https://www.flickr.com/) website. You can customize these to fit your requirements. This API also provide an easy way to download public photos and albums. 
+https://www.flickr.com/) website. You can customize these to fit your requirements. Though this API is read-only, it also provides an easy way to download public photos and albums. 
 
 <a id="setup" />
 
