@@ -6,6 +6,7 @@ driver/
 PyFlickr.egg-info/
 dist/
 
+
 # 忽略單個檔案
 ghostdriver.log
 app.py
