@@ -54,6 +54,7 @@ from pyflickr import PyFlickr
 #### Example :
 ```python
 # This example shows : Download all of albums of one user in a new folder named "ResultFolder"
+# '139958401@N06' is user's id, please see PyFlickr feature - "User Information" to get it.
 
 from pyflickr import PyFlickr
 
